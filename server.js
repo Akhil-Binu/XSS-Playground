@@ -145,7 +145,7 @@ app.post('/api/comments/reset', (req, res) => {
 function startServer(port) {
   const server = app.listen(port, () => {
     console.log(`==================================================`);
-    console.log(`  XSS Playground Server started on port ${port}`);
+    console.log(`  Akhil XSS Playground Server started on port ${port}`);
     console.log(`  Access the site via http://localhost:${port}`);
     console.log(`==================================================`);
   });
