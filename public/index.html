@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberShield XSS Playground</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="layout-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon">X</div>
+        <div class="logo-text">XSS Playground</div>
+      </div>
+      
+      <nav>
+        <ul class="nav-menu">
+          <li class="nav-item active" id="nav-dashboard">
+            <button onclick="switchTab('dashboard')">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+              Dashboard
+            </button>
+          </li>
+          <li class="nav-item" id="nav-reflected">
+            <button onclick="switchTab('reflected')">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+              Reflected XSS
+            </button>
+          </li>
+          <li class="nav-item" id="nav-stored">
+            <button onclick="switchTab('stored')">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+              Stored XSS
+            </button>
+          </li>
+          <li class="nav-item" id="nav-dom">
+            <button onclick="switchTab('dom')">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+              DOM-based XSS
+            </button>
+          </li>
+          <li class="nav-item" id="nav-prevention">
+            <button onclick="switchTab('prevention')">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              Prevention Guide
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p>CyberShield SecLabs v1.0.0</p>
+        <p style="margin-top: 0.25rem; opacity: 0.6;">For Educational Use Only</p>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+      <header>
+        <div class="header-title">
+          <h1 id="page-title">Dashboard</h1>
+          <p id="page-subtitle">Security Sandbox & Interactive Demonstrations</p>
+        </div>
+        
+        <!-- Global Protection Switch -->
+        <div class="security-control" id="global-security-control" style="display: none;">
+          <span class="toggle-label" id="protection-status-label">Mitigation:</span>
+          <div class="switch-wrapper">
+            <label class="switch">
+              <input type="checkbox" id="security-toggle" onchange="toggleSecurityMode()">
+              <span class="slider">
+                <span class="text-secure">SECURE</span>
+                <span class="text-vulnerable">VULN</span>
+              </span>
+            </label>
+          </div>
+        </div>
+      </header>
+
+      <!-- -------------------------------------------------------------
+           Dashboard Welcome Screen
+      ------------------------------------------------------------- -->
+      <section id="tab-dashboard" class="tab-content active">
+        <div class="welcome-hero">
+          <div class="welcome-hero-content">
+            <div class="welcome-badge">Hands-On Labs</div>
+            <h2>Understand, Exploit, and Prevent Cross-Site Scripting (XSS)</h2>
+            <p>XSS is one of the most critical vulnerabilities on the web. It occurs when a web application processes untrusted user inputs and renders them into web pages without proper validation, sanitization, or encoding. Explore how attacker scripts bypass sandbox controls, and learn how to defend your applications.</p>
+            <button class="btn" onclick="switchTab('reflected')">Get Started with Reflected XSS &rarr;</button>
+          </div>
+        </div>
+
+        <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;">Core XSS Vulnerabilities Covered</h3>
+        
+        <div class="concept-grid">
+          <div class="concept-card">
+            <div class="concept-icon">📡</div>
+            <h3>Reflected XSS</h3>
+            <p>User input is reflected by the server-side application response immediately, executing scripts contextually inside the victim's session. Frequently found in searches and error pages.</p>
+          </div>
+          <div class="concept-card">
+            <div class="concept-icon">💾</div>
+            <h3>Stored XSS</h3>
+            <p>The malicious script is saved permanently in a database, log file, or cache. It executes whenever any user fetches the affected record. Highly dangerous.</p>
+          </div>
+          <div class="concept-card">
+            <div class="concept-icon">🌐</div>
+            <h3>DOM-based XSS</h3>
+            <p>Vulnerability entirely resident in client-side script execution. Dynamic input is processed unsafely using dynamic execution sinks (`innerHTML`, `eval`) within the DOM.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- -------------------------------------------------------------
+           Reflected XSS Sandbox
+      ------------------------------------------------------------- -->
+      <section id="tab-reflected" class="tab-content">
+        <div class="status-indicator vulnerable" id="reflected-status">
+          <span class="indicator-dot"></span>
+          <span>Status: <strong>Vulnerable Mode</strong> &mdash; Input is echoed back to the screen unsanitized.</span>
+        </div>
+
+        <div class="grid-2col">
+          <!-- Vulnerability Sandbox Card -->
+          <div class="card">
+            <h2>Reflected XSS Sandbox</h2>
+            <p>Send a query search string. The backend echoes whatever is passed. If a malicious script payload is input, it will execute contextually.</p>
+            
+            <div class="sandbox-input-group">
+              <input type="text" id="reflected-input" class="text-input" placeholder="Search product or enter payload..." value="<script>alert('Reflected XSS!')</script>">
+              <button class="btn" onclick="runReflectedDemo()">Search</button>
+            </div>
+
+            <!-- Exploit Preset buttons -->
+            <div class="preset-payloads">
+              <div class="preset-title">Exploit Payloads (Click to load)</div>
+              <div class="preset-list">
+                <span class="preset-tag" onclick="loadPayload('reflected', '<script>alert(document.domain)<\/script>')">Script Tag</span>
+                <span class="preset-tag" onclick="loadPayload('reflected', '<img src=x onerror=alert(`Image Error Exploit`)>')">Image onerror</span>
+                <span class="preset-tag" onclick="loadPayload('reflected', '<svg onload=alert(`SVG Exploit`)>')">SVG onload</span>
+                <span class="preset-tag" onclick="loadPayload('reflected', '<a href=javascript:alert(1)>Click link</a>')">Javascript URI</span>
+              </div>
+            </div>
+
+            <!-- Output Render Area -->
+            <div class="sandbox-output">
+              <div class="output-header">
+                <span>Output Rendering Sandbox</span>
+                <span id="reflected-mode-badge" class="badge badge-danger">Vulnerable</span>
+              </div>
+              <div class="output-window">
+                <div class="output-container" id="reflected-output">
+                  <!-- Output will reflect here -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Walkthrough & Explanations -->
+          <div class="card">
+            <h2>Code & Prevention Deep-Dive</h2>
+            <p>Understand the implementation difference under the hood. Toggle the secure switch at the top to observe.</p>
+            
+            <div class="code-comparison-header">Server-Side Route Implementation</div>
+            <div class="code-tabs">
+              <button class="code-tab-btn active" id="reflected-tab-vuln" onclick="toggleCodeTab('reflected', 'vuln')">Vulnerable Code</button>
+              <button class="code-tab-btn" id="reflected-tab-secure" onclick="toggleCodeTab('reflected', 'secure')">Secure Code</button>
+            </div>
+
+            <!-- Code block display area -->
+            <div class="code-block-wrapper">
+              <div class="code-block-header">
+                <span id="reflected-code-filename">server.js</span>
+                <button class="copy-btn" onclick="copyCodeText('reflected-code')">Copy</button>
+              </div>
+              <pre><code id="reflected-code"><!-- code injected dynamically --></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- -------------------------------------------------------------
+           Stored XSS Sandbox
+      ------------------------------------------------------------- -->
+      <section id="tab-stored" class="tab-content">
+        <div class="status-indicator vulnerable" id="stored-status">
+          <span class="indicator-dot"></span>
+          <span>Status: <strong>Vulnerable Mode</strong> &mdash; Input is stored on the server database as-is and loaded dynamically using innerHTML.</span>
+        </div>
+
+        <div class="grid-2col">
+          <!-- Sandbox Panel -->
+          <div class="card">
+            <h2>Stored XSS Guestbook</h2>
+            <p>Post message comments to the guestbook wall. Comments are stored inside the backend database in memory. Every visitor will execute any script stored.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+              <input type="text" id="stored-author" class="text-input" placeholder="Your Name" value="Anonymous Attacker">
+              <textarea id="stored-content" class="text-input" style="height: 80px;" placeholder="Leave your comment..."><img src=x onerror=alert('Stored XSS Executed!')></textarea>
+              <div style="display: flex; gap: 0.75rem;">
+                <button class="btn" onclick="submitStoredComment()">Post Comment</button>
+                <button class="btn btn-secondary" onclick="resetStoredDatabase()">Reset DB</button>
+              </div>
+            </div>
+
+            <!-- Exploit Preset buttons -->
+            <div class="preset-payloads">
+              <div class="preset-title">Exploit Payloads (Click to load)</div>
+              <div class="preset-list">
+                <span class="preset-tag" onclick="loadPayload('stored', '<img src=x onerror=alert(`Comment Exploit`)>')">Image load error</span>
+                <span class="preset-tag" onclick="loadPayload('stored', '<a href=javascript:alert(1)>Malicious link!</a>')">Javascript URI Link</span>
+                <span class="preset-tag" onclick="loadPayload('stored', '<iframe src=javascript:alert(1) width=0 height=0></iframe>')">Hidden iframe sink</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stored Comments Wall view -->
+          <div class="card" style="display:flex; flex-direction:column;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+              <h2>Guestbook Wall</h2>
+              <span id="stored-mode-badge" class="badge badge-danger">Vulnerable</span>
+            </div>
+            <div class="comments-wall" id="comments-wall">
+              <!-- Dynamically populated comments -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Deep Dive (Bottom row) -->
+        <div class="card">
+          <h2>Code Comparison - Stored XSS Mitigation</h2>
+          <p>Prevent Stored XSS by implementing proper server-side sanitization, context-aware encoding, or frontend text-rendering frameworks.</p>
+          
+          <div class="grid-2col">
+            <div>
+              <div class="code-comparison-header">Vulnerable Rendering vs Safe Handling</div>
+              <div class="code-tabs">
+                <button class="code-tab-btn active" id="stored-tab-vuln" onclick="toggleCodeTab('stored', 'vuln')">Vulnerable Code</button>
+                <button class="code-tab-btn" id="stored-tab-secure" onclick="toggleCodeTab('stored', 'secure')">Secure Code</button>
+              </div>
+              <div class="code-block-wrapper">
+                <div class="code-block-header">
+                  <span>Code Snippet</span>
+                  <button class="copy-btn" onclick="copyCodeText('stored-code')">Copy</button>
+                </div>
+                <pre><code id="stored-code"><!-- injected dynamically --></code></pre>
+              </div>
+            </div>
+            <div>
+              <h3 style="font-size: 1.1rem; font-weight:700; margin-bottom: 1rem; color: var(--text-main);">Prevention Strategy Checklist</h3>
+              <ul class="method-checklist">
+                <li>
+                  <span class="checklist-icon">&check;</span>
+                  <div>
+                    <strong>Output Encoding</strong>: Avoid using dynamic HTML builders like `element.innerHTML` on raw inputs. Prefer safe DOM elements using `textContent` or standard templates.
+                  </div>
+                </li>
+                <li>
+                  <span class="checklist-icon">&check;</span>
+                  <div>
+                    <strong>Data Sanitization</strong>: If rendering rich text/HTML is required, pass comments through a secure backend HTML parser/sanitizer like DOMPurify or sanitize-html to remove `<script>`, `onerror`, and inline javascript attributes.
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- -------------------------------------------------------------
+           DOM-Based XSS Sandbox
+      ------------------------------------------------------------- -->
+      <section id="tab-dom" class="tab-content">
+        <div class="status-indicator vulnerable" id="dom-status">
+          <span class="indicator-dot"></span>
+          <span>Status: <strong>Vulnerable Mode</strong> &mdash; Hash parameter is loaded into the page using innerHTML.</span>
+        </div>
+
+        <div class="grid-2col">
+          <!-- Sandbox panel -->
+          <div class="card">
+            <h2>DOM-based XSS (Theme Customizer)</h2>
+            <p>DOM XSS occurs strictly in client JavaScript execution. The application reads user-controlled properties like URL parameters, hash inputs, or referrers, and loads them into a DOM "Sink" (`innerHTML`, `document.write`, `eval`).</p>
+            
+            <!-- Address Bar simulation -->
+            <div class="hash-lab-controls">
+              <div class="preset-title">Simulated Browser URL Bar</div>
+              <div class="url-mockbar">
+                <span class="protocol">http://</span>
+                <span class="domain">localhost:3000/labs#theme=</span>
+                <span class="hash" id="url-hash-display">cyberpunk</span>
+              </div>
+              
+              <div class="sandbox-input-group">
+                <input type="text" id="dom-theme-input" class="text-input" placeholder="theme value..." value="cyberpunk">
+                <button class="btn" onclick="updateMockURLHash()">Update URL Hash</button>
+              </div>
+            </div>
+
+            <!-- Exploit Preset buttons -->
+            <div class="preset-payloads">
+              <div class="preset-title">Exploit Payloads (Click to load)</div>
+              <div class="preset-list">
+                <span class="preset-tag" onclick="loadPayload('dom', '<img src=x onerror=alert(`DOM XSS!`)>')">Image onerror Injection</span>
+                <span class="preset-tag" onclick="loadPayload('dom', '<iframe src=javascript:alert(`Iframe injection`) style=display:none></iframe>')">Iframe Injection</span>
+                <span class="preset-tag" onclick="loadPayload('dom', 'dark;background-image:url(&quot;javascript:alert(1)&quot;)')">CSS injection string</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Theme preview board -->
+          <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                <h2>Active Theme Dashboard</h2>
+                <span id="dom-mode-badge" class="badge badge-danger">Vulnerable</span>
+              </div>
+              <p>This panel's visual structure changes based on the loaded theme parameter.</p>
+            </div>
+            
+            <div class="theme-preview-box" id="theme-preview-box">
+              <h3 id="theme-display-title">Active: Cyberpunk Theme</h3>
+              <p style="font-size:0.8rem; margin:0.5rem 0 0 0;">Visual styles parsed client-side using JavaScript.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Deep Dive (Bottom row) -->
+        <div class="card">
+          <h2>Code Comparison - DOM XSS Prevention</h2>
+          <p>Prevent DOM-based XSS by handling inputs safely on the client side without executing raw HTML strings.</p>
+          
+          <div class="grid-2col">
+            <div>
+              <div class="code-comparison-header">Client-Side JavaScript Implementation</div>
+              <div class="code-tabs">
+                <button class="code-tab-btn active" id="dom-tab-vuln" onclick="toggleCodeTab('dom', 'vuln')">Vulnerable Code</button>
+                <button class="code-tab-btn" id="dom-tab-secure" onclick="toggleCodeTab('dom', 'secure')">Secure Code</button>
+              </div>
+              <div class="code-block-wrapper">
+                <div class="code-block-header">
+                  <span>app.js</span>
+                  <button class="copy-btn" onclick="copyCodeText('dom-code')">Copy</button>
+                </div>
+                <pre><code id="dom-code"><!-- injected dynamically --></code></pre>
+              </div>
+            </div>
+            <div>
+              <h3 style="font-size: 1.1rem; font-weight:700; margin-bottom: 1rem; color: var(--text-main);">Safe Client DOM Handling</h3>
+              <ul class="method-checklist">
+                <li>
+                  <span class="checklist-icon">&check;</span>
+                  <div>
+                    <strong>Avoid InnerHTML Sinks</strong>: Avoid `element.innerHTML = val` when loading arbitrary query or hash segments. Prefer safe sinks: `element.textContent`, `element.className`, or `element.style.setProperty()`.
+                  </div>
+                </li>
+                <li>
+                  <span class="checklist-icon">&check;</span>
+                  <div>
+                    <strong>Strict Validation</strong>: Check input against an allowlist of valid values (e.g. only matching `['dark', 'light', 'cyberpunk']`). Reject all other strings.
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- -------------------------------------------------------------
+           Prevention Guide Page
+      ------------------------------------------------------------- -->
+      <section id="tab-prevention" class="tab-content">
+        <div class="welcome-hero" style="padding: 2.5rem; margin-bottom: 2rem;">
+          <div class="welcome-hero-content">
+            <h2>Universal XSS Prevention Guide</h2>
+            <p>Understanding defenses is the ultimate key. Modern applications prevent XSS using context-aware encoding, runtime input sanitization, and network-level sandbox restrictions like Content Security Policy (CSP).</p>
+          </div>
+        </div>
+
+        <div class="grid-2col">
+          <!-- Context Encoding Panel -->
+          <div class="card">
+            <h2>1. Context-Aware Output Encoding</h2>
+            <p>Encode user input before putting it into the page context. Depending on where the input sits, different characters must be converted to safe escape sequences:</p>
+            
+            <ul class="method-checklist" style="margin-bottom: 1.5rem;">
+              <li>
+                <span class="checklist-icon">&check;</span>
+                <div>
+                  <strong>HTML Body Context</strong>: Convert <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>"</code>, <code>'</code> to HTML entities (e.g. <code>&amp;lt;</code>, <code>&amp;gt;</code>).
+                </div>
+              </li>
+              <li>
+                <span class="checklist-icon">&check;</span>
+                <div>
+                  <strong>HTML Attribute Context</strong>: Escape attribute delimiters so attackers cannot break out of attributes. Use strict HTML entity encoding.
+                </div>
+              </li>
+              <li>
+                <span class="checklist-icon">&check;</span>
+                <div>
+                  <strong>JavaScript String Context</strong>: Escape quotes (<code>\"</code>, <code>\'</code>) and forward slashes (<code>\/</code>) or parse data safely as JSON.
+                </div>
+              </li>
+            </ul>
+
+            <div class="code-comparison-header">Standard HTML Escaper (JavaScript)</div>
+            <div class="code-block-wrapper">
+              <pre><code><span class="hl-keyword">function</span> <span class="hl-function">escapeHTML</span>(str) {
+  <span class="hl-keyword">return</span> str
+    .replace(<span class="hl-string">/&amp;/g</span>, <span class="hl-string">'&amp;amp;'</span>)
+    .replace(<span class="hl-string">/&lt;/g</span>, <span class="hl-string">'&amp;lt;'</span>)
+    .replace(<span class="hl-string">/&gt;/g</span>, <span class="hl-string">'&amp;gt;'</span>)
+    .replace(<span class="hl-string">/"/g</span>, <span class="hl-string">'&amp;quot;'</span>)
+    .replace(<span class="hl-string">/'/g</span>, <span class="hl-string">'&amp;#x27;'</span>)
+    .replace(<span class="hl-string">/\//g</span>, <span class="hl-string">'&amp;#x2F;'</span>);
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- Content Security Policy (CSP) Lab -->
+          <div class="card">
+            <h2>2. Content Security Policy (CSP)</h2>
+            <p>CSP is an HTTP response header that restricts resources (scripts, images, stylesheets) that the browser is allowed to load. It serves as a defense-in-depth barrier if XSS injections bypass encoding.</p>
+            
+            <div class="csp-status-panel">
+              <div class="csp-toggle-row">
+                <div>
+                  <strong>Default Policy (No CSP)</strong>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">Inline scripts and any sources can execute.</div>
+                </div>
+                <span class="badge badge-danger">Inactive</span>
+              </div>
+              <div class="csp-toggle-row">
+                <div>
+                  <strong>Strict CSP Configuration</strong>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">Blocks all inline scripts, only scripts from matching hashes or nonces allowed.</div>
+                </div>
+                <span class="badge badge-success">Recommended</span>
+              </div>
+
+              <div>
+                <label class="preset-title">Sample Security Header:</label>
+                <textarea class="csp-rules-textarea" readonly>Content-Security-Policy: 
+  default-src 'self'; 
+  script-src 'self' https://trustedscripts.com;
+  object-src 'none';
+  base-uri 'self';</textarea>
+              </div>
+              
+              <ul class="method-checklist" style="margin-top:0.5rem;">
+                <li>
+                  <span class="checklist-icon">&check;</span>
+                  <div>
+                    <strong>default-src 'self'</strong> restricts source access strictly to current origin.
+                  </div>
+                </li>
+                <li>
+                  <span class="checklist-icon">&check;</span>
+                  <div>
+                    <strong>script-src 'self'</strong> prevents inline block executions, neutralizing the typical <code>&lt;script&gt;</code> payload.
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Simulated XSS Alert Modal Popup (Custom Alert sandbox overlay) -->
+  <div class="alert-modal-overlay" id="alert-modal-overlay">
+    <div class="alert-modal">
+      <div class="alert-modal-header">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        XSS VULNERABILITY EXPLOITED!
+      </div>
+      <div class="alert-modal-body">
+        <p>A script successfully executed inside the page context. If this was a real attacker payload, your cookies, tokens, and local session details would be compromised.</p>
+        <div class="alert-modal-code" id="alert-modal-content">
+          <!-- Executed Script source gets mirrored here -->
+        </div>
+      </div>
+      <div class="alert-modal-footer">
+        <button class="btn btn-danger" onclick="closeAlertModal()">Close Simulation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Main Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
