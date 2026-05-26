@@ -7,8 +7,19 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Middleware to prevent caching
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+});
+
+// Handle favicon to prevent 404 errors
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 // Serve static assets from public folder
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: 0 }));
 
 // In-memory data store for Stored XSS demonstration
 let comments = [
@@ -130,10 +141,23 @@ app.post('/api/comments/reset', (req, res) => {
   res.json({ message: 'Database reset successful', comments });
 });
 
-// Start listening
-app.listen(PORT, '127.0.0.1', () => {
-  console.log(`==================================================`);
-  console.log(`  XSS Playground Server started on http://127.0.0.1:${PORT}`);
-  console.log(`  Running strictly on localhost for safety.`);
-  console.log(`==================================================`);
-});
+// Dynamic Port binding to prevent crash loops when EADDRINUSE
+function startServer(port) {
+  const server = app.listen(port, () => {
+    console.log(`==================================================`);
+    console.log(`  XSS Playground Server started on port ${port}`);
+    console.log(`  Access the site via http://localhost:${port}`);
+    console.log(`==================================================`);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.warn(`Port ${port} is in use. Attempting next port ${port + 1}...`);
+      startServer(port + 1);
+    } else {
+      console.error('Fatal Server Error:', err);
+    }
+  });
+}
+
+startServer(PORT);
