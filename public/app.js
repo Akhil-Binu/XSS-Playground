@@ -98,6 +98,16 @@ function executeInjectedPayload(containerId, rawHTML) {
 // Navigation & Routing System
 // -------------------------------------------------------------
 function switchTab(tabId) {
+  // Auto-dismiss sidebar on mobile tab navigation selection
+  const mobileSidebar = document.getElementById('sidebar');
+  const mobileOverlay = document.getElementById('sidebar-overlay');
+  if (mobileSidebar && mobileSidebar.classList.contains('open')) {
+    mobileSidebar.classList.remove('open');
+  }
+  if (mobileOverlay && mobileOverlay.classList.contains('show')) {
+    mobileOverlay.classList.remove('show');
+  }
+
   // Hide all panels
   document.querySelectorAll('.tab-content').forEach(tab => {
     tab.classList.remove('active');
@@ -727,6 +737,33 @@ function bindInteractiveEvents() {
       });
     });
   });
+
+  // 10. Mobile Sidebar Toggle Listeners
+  const mSidebar = document.getElementById('sidebar');
+  const mOverlay = document.getElementById('sidebar-overlay');
+  const mToggleBtn = document.getElementById('sidebar-toggle-btn');
+  const mCloseBtn = document.getElementById('sidebar-close-btn');
+
+  if (mToggleBtn && mSidebar && mOverlay) {
+    mToggleBtn.addEventListener('click', () => {
+      mSidebar.classList.add('open');
+      mOverlay.classList.add('show');
+    });
+  }
+
+  if (mCloseBtn && mSidebar && mOverlay) {
+    mCloseBtn.addEventListener('click', () => {
+      mSidebar.classList.remove('open');
+      mOverlay.classList.remove('show');
+    });
+  }
+
+  if (mOverlay && mSidebar) {
+    mOverlay.addEventListener('click', () => {
+      mSidebar.classList.remove('open');
+      mOverlay.classList.remove('show');
+    });
+  }
 }
 
 function bootstrapApplication() {

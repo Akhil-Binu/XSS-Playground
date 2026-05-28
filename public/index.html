@@ -12,9 +12,25 @@
 </head>
 <body>
 
+  <!-- Mobile Header Bar -->
+  <div class="mobile-header">
+    <button class="mobile-toggle-btn" id="sidebar-toggle-btn" aria-label="Toggle Navigation">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+    <div class="mobile-logo-text">Akhil XSS Playground</div>
+  </div>
+
   <div class="layout-container">
     <!-- Sidebar Navigation -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close Navigation">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      
       <div class="logo-container">
         <div class="logo-icon">🖧</div>
         <div class="logo-text">Akhil XSS Playground</div>
@@ -500,6 +516,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Backdrop overlay for mobile drawer -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <!-- App Frontend controller script -->
   <script src="app.js"></script>
